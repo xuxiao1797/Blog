@@ -15,8 +15,8 @@
         <td>{{ category.name }}</td>
         <td>
           <n-space>
-          <n-button>修改</n-button>
-          <n-button>删除</n-button>
+          <n-button @click="toUpdate(category)">修改</n-button>
+          <n-button @click="deleteCategory(category)">删除</n-button>
          </n-space>
        </td>
           
@@ -35,6 +35,20 @@
       <n-button @click="add">提交</n-button>
     </template>
   </n-modal>
+
+  <n-modal v-model:show="showUpdateModal" preset="dialog" title="Dialog">
+    <template #header>
+      <div>修改分类</div>
+    </template>
+    <div>
+      <n-input v-model:value="updateCategory.name" type="text" placeholder="请输入名称" />
+    </div>
+    <template #action>
+      <n-button @click="update">提交</n-button>
+    </template>
+  </n-modal>
+
+
   </div>
 </template>
 
@@ -47,16 +61,23 @@ import { useRouter,useRoute } from 'vue-router';
 const message = inject("message")
 
 const axios = inject("axios")
+const dialog = inject("dialog")
 const adminStore = AdminStore()
 
 const router = useRouter()
 const route = useRoute()
 
 const showAddModal = ref(false)
+const showUpdateModal = ref(false)
 
 const categoryList = ref([])
 
 const addCategory =reactive({
+  name:""
+})
+
+const updateCategory = reactive({
+  id:"",
   name:""
 })
 
@@ -70,7 +91,7 @@ const loadData = async () => {
 }
 
 const add = async() => {
-  let res = await axios.post('/category/_token/add',{name:addCategory.name},{headers:{token:adminStore.token}})
+  let res = await axios.post('/category/_token/add',{name:addCategory.name})
   if(res.data.code == 200){
     loadData()
     message.info(res.data.msg)
@@ -78,6 +99,46 @@ const add = async() => {
     message.error(res.data.msg)
   }
   showAddModal.value = false;
+}
+
+const deleteCategory = async (category) => {
+
+  dialog.warning({
+          title: '警告',
+          content: '是否要删除',
+          positiveText: '确定',
+          negativeText: '取消',
+          onPositiveClick: async() => {
+      
+            let res = await axios.delete('/category/_token/delete?id='+category.id)
+             if(res.data.code == 200){
+              loadData()
+              message.info(res.data.msg)
+             }else{
+              message.error(res.data.msg)
+             }
+          },
+          onNegativeClick: () => {
+          }
+        })
+
+}
+
+const toUpdate = async(category) => {
+  showUpdateModal.value = true
+  updateCategory.id = category.id
+  updateCategory.name = category.name
+}
+
+const update = async () =>{
+  let res = await axios.put("/category/_token/update",{id:updateCategory.id,name:updateCategory.name})
+  if(res.data.code == 200){
+      loadData()
+      message.info(res.data.msg)
+  }else{
+      message.error(res.data.msg)
+  }
+  showUpdateModal.value = false
 }
 
 </script>
