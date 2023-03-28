@@ -1,14 +1,14 @@
 <template>
   <div class="main_panel">
     <div class="menus">
-      <div v-for="(menu,index) in menus" @click="toPage">
+      <div v-for="(menu,index) in menus" @click="toPage(menu)">
       {{ menu.name }}
       </div>
     </div>
     <div style="padding: 20px; width: 100%;">
       <router-view></router-view>
     </div>
-    <div class="title">文章管理</div>
+    <div class="title">后台管理</div>
   </div>
 </template>
 
@@ -32,8 +32,14 @@ let menus = [
   {name:"退出登录",href:"logout"}
 ]
 
-const toPage = () => {
-
+const toPage = (menu) => {
+  if(menu.href == "logout"){
+    //退出登录
+    router.push("/login")
+  }else{
+    //跳转页面
+    router.push(menu.href)
+  }
 }
 
 </script>

@@ -6,7 +6,10 @@ let routes = [
   {path:"/login",
   component:()=>import("../views/Login.vue")},
   {path:"/dashboard",
-  component:() => import("../views/DashBoard/Dashboard.vue")},
+  component:() => import("../views/DashBoard/Dashboard.vue"),children:[
+    {path:"/dashboard/category",component:() => import("../views/DashBoard/Category.vue")},
+    {path:"/dashboard/article",component:() => import("../views/DashBoard/Article.vue")}
+  ]},
   
 ]
 
