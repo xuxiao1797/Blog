@@ -27,7 +27,7 @@ router.get("/list", async (req,res) => {
 })
 
 //添加
-router.post("/add", async (req, res) => {
+router.post("/_token/add", async (req, res) => {
    let {name} = req.body
    const insert_sql = "INSERT INTO 'category' ('id','name') VALUES (?,?)"
 
@@ -48,8 +48,10 @@ router.post("/add", async (req, res) => {
 })
 
 //修改
-router.put("/update", async (req, res) => {
+router.put("/_token/update", async (req, res) => {
   let {id,name} = req.body
+  
+
   const update_sql = "UPDATE 'category' SET name = ? WHERE id = ?"
 
   let {err,rows} =  await db.async.run(update_sql,[name,id])
@@ -70,7 +72,7 @@ router.put("/update", async (req, res) => {
 
 
 //删除
-router.delete("/delete", async (req, res) => {
+router.delete("/_token/delete", async (req, res) => {
   let id = req.query.id
   const delete_sql = "DELETE from 'category' where id = ?"
 

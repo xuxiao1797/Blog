@@ -8,6 +8,7 @@ const express = require("express");
 const multer = require("multer");
 const app = express();
 const path = require("path")
+const { db, genid } = require("./db/DbUtils");
 
 const port = 8080;
 
@@ -32,6 +33,34 @@ app.use(update.any())
 
 //静态资源路径
 app.use(express.static(path.join(__dirname,"public")))
+
+
+
+const ADMIN_TOKEN_PATH = "/_token"
+app.all("*",async (req,res,next) => {
+  if(req.path.indexOf(ADMIN_TOKEN_PATH) > -1){
+    
+
+    let token = req.headers.token;
+ 
+
+    let admin_token_sql = "select * from 'admin' where token = ?"
+    let adminResult = await db.async.all(admin_token_sql,[token])
+  
+    if(adminResult.err != null || adminResult.rows.length == 0){
+      res.send({
+        code:403,
+        msg:"请先登录"
+      })
+      return
+    }else{
+      next()
+    }
+
+  }else{
+    next()
+  }
+})
 
 app.use("/test",require("./routers/TestRouter"))
 
