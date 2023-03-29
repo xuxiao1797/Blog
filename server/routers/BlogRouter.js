@@ -117,7 +117,7 @@ router.get("/search", async (req, res) => {
 
   let countResult = await db.async.all(searchCountSql,searchCountParams)
 
-  console.log(searchSql,countResult)
+  // console.log(searchSql,countResult)
 
   if(searchResult.err == null && countResult.err == null){
     res.send({
@@ -142,6 +142,28 @@ router.get("/search", async (req, res) => {
 
 
 
+})
+
+//查询单篇博客内容
+router.get("/detail", async (req, res) => {
+  let id = req.query.id
+  const detail_sql = "select * from 'blog' where id = ?"
+
+  let {err,rows} =  await db.async.all(detail_sql,[id]);
+
+
+  if(err == null){
+   res.send({
+     code:200,
+     msg:"查询成功",
+     rows
+   })
+  }else{
+   res.send({
+     code:500,
+     msg:"查询失败"
+   })
+  }
 })
 
 

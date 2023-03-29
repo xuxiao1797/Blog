@@ -1,5 +1,5 @@
 <template>
-  <n-tabs default-value="list" justify-content="start" type="line">
+  <n-tabs v-model:value="tabValue" justify-content="start" type="line">
       <n-tab-pane name="list" tab="文章列表">
         <div v-for="(blog,index) in blogListInfo" style="margin-buttom:15px">
         <n-card :title="blog.title">
@@ -8,8 +8,8 @@
           <template #footer>
             <n-space align="center">
               <div>发布时间：{{ blog.create_time }}</div>
-              <n-button>修改</n-button>
-              <n-button>删除</n-button>
+              <n-button @click="toUpdate(blog)">修改</n-button>
+              <n-button @click="todelete(blog)">删除</n-button>
             </n-space>
           </template>
         </n-card>
@@ -43,8 +43,22 @@
          </n-form-item>
         </n-form>
       </n-tab-pane>
-      <n-tab-pane name="jay chou" tab="周杰伦">
-        七里香
+      <n-tab-pane name="update" tab="修改">
+        <n-form>
+          <n-form-item path="age" label="标题">
+         <n-input v-model:value="updateArticle.title" placeholder="请输入标题"/>
+         </n-form-item>
+         <n-form-item path="age" label="分类">
+         <n-select v-model:value="updateArticle.categoryId" :options="categoryOptions" />
+         </n-form-item>
+         
+         <n-form-item path="age" label="文章内容">
+         <TextEditor v-model="updateArticle.content"></TextEditor>
+         </n-form-item>
+         <n-form-item path="age" label="">
+         <n-button @click="update">提交</n-button>
+         </n-form-item>
+        </n-form>
       </n-tab-pane>
     </n-tabs>
 </template>
@@ -70,9 +84,20 @@ let addArticle = reactive({
   categoryId:"",
   content:""
 })
+
+let updateArticle = reactive({
+  id:0,
+  title:"",
+  categoryId:"",
+  content:""
+})
+
 const categoryOptions = ref([])
 
 const blogListInfo = ref([])
+
+const tabValue = ref("list")
+const dialog = inject("dialog")
 
 const pageInfo = reactive({
   page:1,
@@ -153,6 +178,49 @@ const changePageSize = (pageSize) => {
   loadBlogs()
 }
 
+const toUpdate = async (blog) =>{
+  tabValue.value = 'update'
+  let res = await axios.get('/blog/detail?id='+blog.id)
+  updateArticle.id = blog.id
+  updateArticle.title = res.data.rows[0].title
+  updateArticle.categoryId = res.data.rows[0].category_id
+  updateArticle.content = res.data.rows[0].content
+}
+
+const update = async() =>{
+  let res = await axios.put('/blog/_token/update',updateArticle)
+  if(res.data.code == 200){
+    message.info(res.data.msg)
+    loadBlogs()
+    tabValue.value = 'list'
+  }else{
+    message.error(res.data.msg)
+  }
+}
+
+const todelete  = async(blog) =>{
+
+  dialog.warning({
+          title: '警告',
+          content: '是否要删除',
+          positiveText: '确定',
+          negativeText: '取消',
+          onPositiveClick: async() => {
+      
+            let res = await axios.delete('/blog/_token/delete?id='+blog.id)
+            if(res.data.code == 200){
+               message.info(res.data.msg)
+              loadBlogs()
+                tabValue.value = 'list'
+               }else{
+            message.error(res.data.msg)
+              }
+          },
+          onNegativeClick: () => {
+          }
+        })
+  
+}
 // const toPage = async(page) =>{
 //   console.log(pageInfo)
 //   pageInfo.page = page

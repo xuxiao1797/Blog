@@ -70,7 +70,7 @@ const login = async () => {
       localStorage.setItem("remember",admin.remember?1:0)
     }
 
-    router.push("/dashboard")
+    router.push("/dashboard/article")
     message.info("登录成功")
    
   }else{
