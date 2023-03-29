@@ -175,6 +175,7 @@ const changePage = (page) => {
 
 const changePageSize = (pageSize) => {
   pageInfo.pageSize = pageSize
+  pageInfo.page = 1
   loadBlogs()
 }
 

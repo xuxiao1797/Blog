@@ -117,7 +117,7 @@ router.get("/search", async (req, res) => {
 
   let countResult = await db.async.all(searchCountSql,searchCountParams)
 
-  // console.log(searchSql,countResult)
+  // console.log("wheresqlstr" + whereSqlStr)
 
   if(searchResult.err == null && countResult.err == null){
     res.send({
