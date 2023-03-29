@@ -106,7 +106,7 @@ router.get("/search", async (req, res) => {
   }
   
 
-  let searchSql = "select * from 'blog'" + whereSqlStr + "order by create_time DESC limit ?,?"
+  let searchSql = "select `id`,`category_id`,`title`,substr(`content`,0,50) AS `content`,`create_time` from `blog`" + whereSqlStr + "order by create_time DESC limit ?,?"
 
   let searchSqlParams = params.concat([(page-1)*pageSize,pageSize])
 
@@ -135,7 +135,8 @@ router.get("/search", async (req, res) => {
   }else{
     res.send({
       code:500,
-      msg:"查询失败"
+      msg:"查询失败",
+      data:err
     })
   }
 
