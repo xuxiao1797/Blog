@@ -1,5 +1,3 @@
-# Blog
-
 ## 简介：
 后端使用JavaScript，前端使用vue框架实现的博客系统。可以新建，查看博客，按分类查看以及关键词搜索。数据库使用sqlite3\
 使用模块：express，axios，pinia，sass，vue-router，naive-ui，wangeditor
