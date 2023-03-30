@@ -10,7 +10,7 @@ const app = express();
 const path = require("path")
 const { db, genid } = require("./db/DbUtils");
 
-const port = 80;
+const port = 8080;
 
 //开放跨域请求
 app.use(function (req,res,next){
